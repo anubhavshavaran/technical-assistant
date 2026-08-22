@@ -71,7 +71,6 @@ def retrieve(
 
 def retrieve_faiss(
     query,
-    embeddings,
     chunks,
     bi_encoder,
     cross_encoder,
@@ -94,12 +93,15 @@ def retrieve_faiss(
     
     scores, top_indices = index.search(query_embedding, retrieval_k)
 
+    scores = scores[0]
+    top_indices = top_indices[0]
+
     candidates = [
         {
             "score": float(scores[i]),
-            "chunk": chunks[i],
+            "chunk": chunks[idx],
         }
-        for i in top_indices
+        for i, idx in enumerate(top_indices)
     ]
 
     pairs = [
@@ -107,10 +109,10 @@ def retrieve_faiss(
         for result in candidates
     ]
 
-    scores = cross_encoder.predict(pairs)
+    rerank_scores  = cross_encoder.predict(pairs)
 
     reranked = sorted(
-        zip(candidates, scores),
+        zip(candidates, rerank_scores),
         key=lambda x: x[1],
         reverse=True
     )

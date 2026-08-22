@@ -1,4 +1,4 @@
-from embedding import retrieve, embeddings, chunks, bi_encoder, cross_encoder
+from embedding import retrieve_faiss, embeddings, chunks, bi_encoder, cross_encoder
 import numpy as np
 
 def recall_at_k(retrieved_results, relevant_ids, k):
@@ -103,9 +103,8 @@ for eval_item in evaluation_data:
     if not relevant_chunks:
         continue
 
-    candidates, final_results = retrieve(
+    candidates, final_results = retrieve_faiss(
         query,
-        embeddings,
         chunks,
         bi_encoder,
         cross_encoder,
