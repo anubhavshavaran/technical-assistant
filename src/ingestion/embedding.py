@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer, CrossEncoder
-from chunk_document import generate_chunks
-from load_documents import load_documents
+from src.ingestion.chunk_document import generate_chunks
+from src.ingestion.load_documents import load_documents
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import faiss
@@ -84,13 +84,6 @@ def retrieve_faiss(
     
     faiss.normalize_L2(query_embedding)
 
-    # similarities = cosine_similarity(
-    #     query_embedding,
-    #     embeddings
-    # )[0]
-
-    # top_indices = np.argsort(similarities)[::-1][:retrieval_k]
-    
     scores, top_indices = index.search(query_embedding, retrieval_k)
 
     scores = scores[0]
