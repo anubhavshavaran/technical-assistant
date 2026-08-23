@@ -21,24 +21,14 @@ model = AutoModelForCausalLM.from_pretrained(
 docs = load_documents()
 chunks = generate_chunks(docs)
 
-query = "How to use Firebase?"
+query = "Build Domain-Driven Design (DDD) applications in Go"
 
-_, retrieved_results = retrieve_faiss(
-    query,
-    chunks,
-    bi_encoder,
-    cr_encoder,
-    retrieval_k=50,
-    final_k=1
-)
-
-def build_context(results, max_words_per_chunk=1500):
+def build_context(results, max_chars_per_chunk=1500):
     contexts = []
     
     for i, result in enumerate(results, start=1):
         chunk = result['chunk']
-        print('len',len(chunk["text"]))
-        text = chunk["text"][:max_words_per_chunk]
+        text = chunk["text"][:max_chars_per_chunk]
         
         contexts.append(
             f"[Source {i}]\n"
@@ -57,7 +47,7 @@ def build_messages(context, query):
                 "You are a technical documentation assistant. "
                 "Answer the user's question using only the provided context. "
                 "Do not invent information that is not supported by the context. "
-                "When possible, cite the source using [Source N]. "
+                "Cite the source using [Source N]. "
                 "If the context does not contain enough information to answer "
                 "the question, say so explicitly."
             ),
@@ -72,8 +62,18 @@ def build_messages(context, query):
         }
     ]
 
-def generate_answer(tokenizer, model, retrieved_results, query):
-    context = build_context(retrieved_results,)
+def generate_answer(query):
+    _, retrieved_results = retrieve_faiss(
+        query,
+        chunks,
+        bi_encoder,
+        cr_encoder,
+        retrieval_k=50,
+        final_k=1
+    )
+    
+    context = build_context(retrieved_results, 2000)
+
     messages = build_messages(context, query)
     
     inputs = tokenizer.apply_chat_template(
@@ -86,7 +86,7 @@ def generate_answer(tokenizer, model, retrieved_results, query):
     
     outputs = model.generate(
         **inputs,
-        max_new_tokens=200,
+        max_new_tokens=500,
         do_sample=False,
     )
 
@@ -95,8 +95,12 @@ def generate_answer(tokenizer, model, retrieved_results, query):
         skip_special_tokens=True
     )
 
-    return answer
+    return {
+        "query": query,
+        "answer": answer,
+        "retrieved_results": retrieved_results,
+        "context": context
+    }
 
-answer = generate_answer(tokenizer, model, retrieved_results, query)
-
+answer = generate_answer(query)
 print(answer)
