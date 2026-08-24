@@ -1,4 +1,4 @@
-from src.ingestion.chunk_document import generate_chunks
+from src.ingestion.chunk_document import generate_chunks, find_chunk_by_id
 from src.ingestion.load_documents import load_documents
 from data.training.training_data import queries
 from sentence_transformers import SentenceTransformer
@@ -18,7 +18,7 @@ for query in queries:
     for positive in query["positives"]:
         training_data.append(
             InputExample(
-                texts=[query["query"], positive]
+                texts=[query["query"], find_chunk_by_id(chunks, positive)["text"]]
             )
         )
 
