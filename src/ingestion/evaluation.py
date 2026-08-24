@@ -1,4 +1,4 @@
-from embedding import retrieve_faiss, embeddings, chunks, bi_encoder, cross_encoder
+from src.ingestion.embedding import retrieve_faiss, chunks, bi_encoder, cross_encoder
 import numpy as np
 
 def recall_at_k(retrieved_results, relevant_ids, k):

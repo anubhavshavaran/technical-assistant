@@ -28,3 +28,8 @@ def generate_chunks(data):
         chunks.extend(chunk)
 
     return chunks
+
+def find_chunk_by_id(chunks, id):
+    match = next((item for item in chunks if item.get("id") == id), None)
+    
+    return match

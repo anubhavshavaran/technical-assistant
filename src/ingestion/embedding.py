@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import faiss
 
-bi_encoder = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+bi_encoder = SentenceTransformer("models/go-retriever")
 cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
 docs = load_documents()
@@ -71,9 +71,9 @@ def retrieve(
 
 def retrieve_faiss(
     query,
-    chunks,
-    bi_encoder,
-    cross_encoder,
+    chunks=chunks,
+    bi_encoder=bi_encoder,
+    cross_encoder=cross_encoder,
     retrieval_k=50,
     final_k=5
 ):
