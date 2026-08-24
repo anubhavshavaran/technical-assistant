@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import faiss
 
-bi_encoder = SentenceTransformer('models/go-retriever-hard-negative/checkpoint-62')
+bi_encoder = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
 docs = load_documents()
